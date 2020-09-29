@@ -36,6 +36,8 @@ defmodule Fika.Parser do
 
   keyword =
     choice([
+      string("if"),
+      string("else"),
       string("fn"),
       string("do"),
       string("end")
@@ -100,6 +102,22 @@ defmodule Fika.Parser do
     |> concat(identifier)
     |> wrap(optional(function_ref_type_parens))
     |> Helper.to_ast(:function_ref)
+
+  exp_if =
+    ignore(string("if"))
+    |> concat(require_space)
+    |> parsec(:exp)
+    |> concat(require_space)
+    |> ignore(string("do"))
+    |> concat(require_space)
+    |> wrap(parsec(:exps))
+    |> concat(require_space)
+    |> ignore(string("else"))
+    |> concat(require_space)
+    |> wrap(parsec(:exps))
+    |> concat(require_space)
+    |> ignore(string("end"))
+    |> Helper.to_ast(:exp_if)
 
   list_rest =
     ignore(string(","))
@@ -201,6 +219,7 @@ defmodule Fika.Parser do
       exp_paren,
       function_call,
       identifier,
+      exp_if,
       exp_list,
       record,
       function_ref

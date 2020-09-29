@@ -524,4 +524,24 @@ defmodule Fika.ParserTest do
       ]
     end
   end
+
+  test "if condition" do
+    str = """
+    if 1 + 2 do
+      a = 1
+      b = 2
+    else
+      c = 3
+    end
+    """
+
+    {:ok, result, _rest, _context, _line, _byte_offset} = Parser.expression(str)
+
+    assert result == [{
+      {:if, {7, 31, 34}},
+      {:identifier, {1, 0, 6}, :foo},
+      [{:identifier, {2, 10, 13}, :x}, {:integer, {3, 14, 17}, 1}],
+      [{:identifier, {5, 23, 26}, :y}, {:integer, {6, 27, 30}, 2}]
+    }]
+  end
 end

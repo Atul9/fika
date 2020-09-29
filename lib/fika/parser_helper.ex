@@ -108,6 +108,10 @@ defmodule Fika.ParserHelper do
     end
   end
 
+  def do_to_ast({[condition_exp, true_branch, false_branch], line}, :exp_if) do
+    {{:if, line}, condition_exp, true_branch, false_branch}
+  end
+
   defp value_from_identifier({:identifier, _line, value}) do
     value
   end
